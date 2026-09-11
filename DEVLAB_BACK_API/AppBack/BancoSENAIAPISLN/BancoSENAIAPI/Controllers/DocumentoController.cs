@@ -33,6 +33,11 @@ namespace BancoSENAIAPI.Controllers
             string novoNome = $"{codigoCliente}_{nomeOriginal}_{Guid.NewGuid()}{extensao}";
 
             string caminhoFinal = Path.Combine(pastaCliente, novoNome);
+
+            using (var stream = new FileStream(caminhoFinal, FileMode.Create))
+            {
+                await arquivo.CopyToAsync(stream);
+            }
         }
     }
 }
