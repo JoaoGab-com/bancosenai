@@ -15,7 +15,7 @@ namespace BancoSENAIAPI.Controllers
         [HttpPost("upload/{codigoCliente}")]
         public async Task<IActionResult> AnexarArquivo(int codigoCliente, IFormFile arquivo)
         {
-            if (arquivo == null || arquivo.Length == 8)
+            if (arquivo == null || arquivo.Length == 0)
             {
                 return BadRequest("Nenhum arquivo foi criado.");
             }
@@ -49,6 +49,56 @@ namespace BancoSENAIAPI.Controllers
             _documentosMetadados.Add(documentoMetadados);
 
             return Ok(new { mensagem = "Documento anexado com sucesso", arquivoSalvo = novoNome });
+        }
+        [HttpGet("listar/{codigoCliente}")]
+        public IActionResult ListarDocumentos(int codigoCliente)
+        {
+            var documentos = _documentosMetadados
+                .Where(d => d.CodigoCliente == codigoCliente)
+                .ToList();
+
+            if (!documentos.Any())
+            {
+                return NotFound("Nenhum documento encontrado para este cliente.");
+            }
+
+            return Ok(documentos);
+        }
+        [HttpGet("download/{id}")]
+        public IActionResult DowloadDocumento(int id)
+        {
+            var documento = _documentosMetadados.FirstOrDefault(d => d.ID == id);
+            if (documento == null)
+            {
+                return NotFound("Documento não encontrado.");
+            }
+            if (!System.IO.File.Exists(documento.Caminho))
+            {
+                return NotFound("O arquivo físico não foi encontrado no servidor");
+            }
+            byte[] bytesArquivo = System.IO.File.ReadAllBytes(documento.Caminho);
+            string nomeArquivoDownload = $"{documento.Name}{documento.Extensão}";
+
+            return File(bytesArquivo, "application/octet-stream", nomeArquivoDownload);
+        }
+        [HttpDelete("excluir/{id}")]
+        public IActionResult ExcluirDocumento(int id)
+        {
+            var documento = _documentosMetadados.FirstOrDefault(d => d.ID == id);
+
+            if (documento == null)
+            {
+                return NotFound("Documento não encontrado.");
+            }
+
+            if (System.IO.File.Exists(documento.Caminho))
+            {
+                System.IO.File.Delete(documento.Caminho);
+            }
+
+            _documentosMetadados.Remove(documento);
+
+            return Ok(new { mensagem = "Documento e arquivo físico excluídos com sucesso." });
         }
     }
 }
