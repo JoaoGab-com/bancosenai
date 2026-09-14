@@ -81,5 +81,24 @@ namespace BancoSENAIAPI.Controllers
 
             return File(bytesArquivo, "application/octet-stream", nomeArquivoDownload);
         }
+        [HttpDelete("excluir/{id}")]
+        public IActionResult ExcluirDocumento(int id)
+        {
+            var documento = _documentosMetadados.FirstOrDefault(d => d.ID == id);
+
+            if (documento == null)
+            {
+                return NotFound("Documento não encontrado.");
+            }
+
+            if (System.IO.File.Exists(documento.Caminho))
+            {
+                System.IO.File.Delete(documento.Caminho);
+            }
+
+            _documentosMetadados.Remove(documento);
+
+            return Ok(new { mensagem = "Documento e arquivo físico excluídos com sucesso." });
+        }
     }
 }
