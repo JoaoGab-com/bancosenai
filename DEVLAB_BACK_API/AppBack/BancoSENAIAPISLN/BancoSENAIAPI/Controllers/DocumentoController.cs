@@ -29,9 +29,9 @@ namespace BancoSENAIAPI.Controllers
                 return BadRequest("O arquivo excede o tamanho máximo permitido de 2 MB.");
             }
 
-            string extensao1 = Path.GetExtension(arquivo.FileName).ToLower();
+            string extensao12 = Path.GetExtension(arquivo.FileName).ToLower();
 
-            if (!_extensoesPermitidas.Contains(extensao1))
+            if (!_extensoesPermitidas.Contains(extensao12))
             {
                 return BadRequest("Extensão de arquivo não permitida. Apenas arquivos .pdf, .jpg e .png são aceitos.");
             }
