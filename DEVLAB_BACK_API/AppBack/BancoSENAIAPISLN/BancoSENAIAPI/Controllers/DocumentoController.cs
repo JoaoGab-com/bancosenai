@@ -14,6 +14,8 @@ namespace BancoSENAIAPI.Controllers
 
         private const long TamanhoMaximoBytes = 2 * 1024 * 1024;
 
+        private readonly string[] _extensoesPermitidas = { ".pdf", ".jpg", ".png" };
+
         [HttpPost("upload/{codigoCliente}")]
         public async Task<IActionResult> AnexarArquivo(int codigoCliente, IFormFile arquivo)
         {
@@ -25,6 +27,13 @@ namespace BancoSENAIAPI.Controllers
             if (arquivo.Length > TamanhoMaximoBytes)
             {
                 return BadRequest("O arquivo excede o tamanho máximo permitido de 2 MB.");
+            }
+
+            string extensao1 = Path.GetExtension(arquivo.FileName).ToLower();
+
+            if (!_extensoesPermitidas.Contains(extensao1))
+            {
+                return BadRequest("Extensão de arquivo não permitida. Apenas arquivos .pdf, .jpg e .png são aceitos.");
             }
 
             string pastaCliente = Path.Combine(_caminhoRaiz, codigoCliente.ToString());
