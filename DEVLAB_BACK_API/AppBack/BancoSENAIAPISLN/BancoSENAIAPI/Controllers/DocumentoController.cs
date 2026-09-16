@@ -12,12 +12,19 @@ namespace BancoSENAIAPI.Controllers
 
         private static int _next = 1;
 
+        private const long TamanhoMaximoBytes = 2 * 1024 * 1024;
+
         [HttpPost("upload/{codigoCliente}")]
         public async Task<IActionResult> AnexarArquivo(int codigoCliente, IFormFile arquivo)
         {
             if (arquivo == null || arquivo.Length == 0)
             {
                 return BadRequest("Nenhum arquivo foi criado.");
+            }
+
+            if (arquivo.Length > TamanhoMaximoBytes)
+            {
+                return BadRequest("O arquivo excede o tamanho máximo permitido de 2 MB.");
             }
 
             string pastaCliente = Path.Combine(_caminhoRaiz, codigoCliente.ToString());
