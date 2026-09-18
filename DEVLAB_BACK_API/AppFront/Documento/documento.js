@@ -11,7 +11,7 @@ async function enviarDocumento() {
     }
 
     const dadosArquivos = new FormData();
-    dadosArquivos.append("arquivo ", arquivo);
+    dadosArquivos.append("arquivo", arquivo);
 
     const responde = await fetch(`${URL_API}/upload/${codigoCliente}`, {
         method: "POST",
@@ -24,7 +24,6 @@ async function enviarDocumento() {
         document.getElementById("arquivo").value = "";
 
     } else {
-        const erro = await response.json();
-        alert("Erro: " + (erro.message || "Falha ao enviar o documento"));
+        alert("Erro. Falha ao enviar o documento")
     }
 }
