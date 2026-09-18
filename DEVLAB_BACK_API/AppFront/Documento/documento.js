@@ -27,3 +27,36 @@ async function enviarDocumento() {
         alert("Erro. Falha ao enviar o documento")
     }
 }
+async function buscarDocumentos(codigoParam = null) {
+    const codigoCliente = codigoParam || document.getElementById("buscaCodigoCliente").value;
+
+    if (!codigoCliente) {
+        alert("Informe o codigo do cliente para buscar");
+        return;
+    }
+
+    try {
+        const responde = await fetch(`${URL_API}/listar/${codigoCliente}`);
+        if (!responde.ok) {
+            alert("Erro ao buscar documentos");
+            return;
+        }
+
+        const documentos = await responde.json();
+        const tbody = document.getElementById("tabelaDocumentos");
+        tbody.innerHTML = "";
+
+        documentos.forEach(doc => {
+            const id = doc.id || doc.Id;
+            const nome = doc.nome || doc.Nome;
+            const extensao = doc.extensao || doc.Extensao;
+
+            const tr = document.createElement("tr");
+            
+            tbody.appendChild(tr);
+        });
+    } catch (erro) {
+        console.error(erro);
+        alert("Erro na conexao ao buscar documentos");
+    }
+}
