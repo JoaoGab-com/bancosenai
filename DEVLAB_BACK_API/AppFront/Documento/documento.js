@@ -90,3 +90,25 @@ async function baixarDocumento(id, nomeArquivo) {
         alert("Erro na conexao ao baixar documento");
     }
 }
+async function excluirDocumento(id) {
+    if (!confirm("Deseja realmente excluir este documento?")) return;
+
+    try {
+        const responde = await fetch(`${URL_API}/${id}`, {
+            method: "DELETE"
+        });
+
+        if (responde.ok) {
+            alert("Documento excluido com sucesso!");
+            const codigoBusca = document.getElementById("buscaCodigoCliente").value;
+            if (codigoBusca) {
+                buscarDocumentos(codigoBusca);
+            }
+        } else {
+            alert("Erro ao excluir o documento");
+        }
+    } catch (erro) {
+        console.error(erro);
+        alert("Erro na conexao ao excluir documento");
+    }
+}
