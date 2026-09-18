@@ -52,11 +52,41 @@ async function buscarDocumentos(codigoParam = null) {
             const extensao = doc.extensao || doc.Extensao;
 
             const tr = document.createElement("tr");
-            
+            tr.innerHTML = `
+                <td>${id}</td>
+                <td>${nome}</td>
+                <td>${extensao}</td>
+                <td>
+                    <button style="background-color: #ffc107; border: none; padding: 5px 10px; cursor: pointer;" onclick="baixarDocumento(${id}, '${nome}')">Baixar</button>
+                    <button style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;" onclick="excluirDocumento(${id})">Excluir</button>
+                </td>
+            `;
             tbody.appendChild(tr);
         });
     } catch (erro) {
         console.error(erro);
         alert("Erro na conexao ao buscar documentos");
+    }
+}
+async function baixarDocumento(id, nomeArquivo) {
+    try {
+        const responde = await fetch(`${URL_API}/listar/${id}`);
+        if (!responde.ok) {
+            alert("Erro ao baixar o documento");
+            return;
+        }
+
+        const blob = await responde.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = nomeArquivo;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (erro) {
+        console.error(erro);
+        alert("Erro na conexao ao baixar documento");
     }
 }
