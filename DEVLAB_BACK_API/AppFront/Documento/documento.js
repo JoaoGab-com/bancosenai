@@ -70,7 +70,7 @@ async function buscarDocumentos(codigoParam = null) {
 }
 async function baixarDocumento(id, nomeArquivo) {
     try {
-        const responde = await fetch(`${URL_API}/listar/${id}`);
+        const responde = await fetch(`${URL_API}/dowload/${id}`);
         if (!responde.ok) {
             alert("Erro ao baixar o documento");
             return;
