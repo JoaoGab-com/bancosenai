@@ -14,9 +14,9 @@ namespace BancoSENAIAPI.Controllers
     public class AuthController : Controller
     {
         private readonly AppDbContext _context;
-        private readonly TokenContext _tokenServico;
+        private readonly TokenService _tokenServico;
 
-        public AuthController(AppDbContext context, TokenContext tokenServico)
+        public AuthController(AppDbContext context, TokenService tokenServico)
         {
             _context = context;
             _tokenServico = tokenServico;
@@ -32,12 +32,25 @@ namespace BancoSENAIAPI.Controllers
             var usuario = new Usuario
             {
                 NomeUsuario = dto.NomeUsuario,
-                SenhaRash = BCrypt.Net.BCrypt.HashPassword(dto.Senha)
+                SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha)
             };
 
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
             return Created("", new { usuario.Id, usuario.NomeUsuario });
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
+        {
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.NomeUsuario == dto.NomeUsuario);
+            if (usuario == null || !BCrypt.Net.BCrypt.Verify(dto.Senha, usuario.SenhaHash))
+            {
+                return Unauthorized(new { message = "Usuário ou senha inválidos" });
+            }
+            var (token, expiramEm) = _tokenServico.GerarToken(usuario);
+
+            return Ok(new LoginResponseDto {Token = token, ExpiraEm = expiramEm});
         }
     }
 }
