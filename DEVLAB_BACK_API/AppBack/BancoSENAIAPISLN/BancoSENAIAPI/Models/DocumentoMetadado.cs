@@ -14,6 +14,6 @@ namespace BancoSENAIAPI.Models
         public string Caminho { get; set; }
         [Required]
         public int CodigoCliente  { get; set; }
-        [Required]
+        
     }
 }
