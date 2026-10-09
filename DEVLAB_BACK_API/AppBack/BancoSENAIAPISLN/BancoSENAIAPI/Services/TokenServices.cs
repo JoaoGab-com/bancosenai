@@ -37,7 +37,7 @@ namespace BancoSENAIAPI.Services
 
             var token = new JwtSecurityToken(
                 issuer: jwtSection["Issuer"],
-                audience: jwtSection["Audience"],
+                audience: jwtSection["Audiance"],
                 claims: claims,
                 expires: expiraEm,
                 signingCredentials: credenciais);
