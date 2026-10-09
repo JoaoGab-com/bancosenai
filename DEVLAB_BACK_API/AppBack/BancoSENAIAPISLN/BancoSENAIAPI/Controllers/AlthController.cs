@@ -55,4 +55,4 @@ namespace BancoSENAIAPI.Controllers
             return Ok(new LoginResponseDto { Token = token, ExpiraEm = expiracao });
         }
     }
-}-
+}
